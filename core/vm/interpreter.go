@@ -203,9 +203,9 @@ func (in *EVMInterpreter) Run(contract *Contract, input []byte, readOnly bool) (
 			var dynamicCost uint64
 			dynamicCost, err = operation.dynamicGas(in.evm, contract, stack, mem, memorySize)
 			cost += dynamicCost // for tracing
-			if err != nil || !contract.UseGas(dynamicCost) {
-				return nil, ErrOutOfGas
-			}
+			//if err != nil || !contract.UseGas(dynamicCost) {
+			//	return nil, ErrOutOfGas
+			//}
 			// Do tracing before memory expansion
 			if in.cfg.Debug {
 				in.cfg.Tracer.CaptureState(pc, op, gasCopy, cost, callContext, in.returnData, in.evm.depth, err)
