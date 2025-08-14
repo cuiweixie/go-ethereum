@@ -59,7 +59,7 @@ func TestWebsocketOriginCheck(t *testing.T) {
 	defer srv.Stop()
 	defer httpsrv.Close()
 
-	client, err := DialWebsocket(context.Background(), wsURL, "http://ekzample.com")
+	client, err := DialWebsocket(t.Context(), wsURL, "http://ekzample.com")
 	if err == nil {
 		client.Close()
 		t.Fatal("no error for wrong origin")
@@ -70,7 +70,7 @@ func TestWebsocketOriginCheck(t *testing.T) {
 	}
 
 	// Connections without origin header should work.
-	client, err = DialWebsocket(context.Background(), wsURL, "")
+	client, err = DialWebsocket(t.Context(), wsURL, "")
 	if err != nil {
 		t.Fatalf("error for empty origin: %v", err)
 	}
@@ -89,7 +89,7 @@ func TestWebsocketLargeCall(t *testing.T) {
 	defer srv.Stop()
 	defer httpsrv.Close()
 
-	client, err := DialWebsocket(context.Background(), wsURL, "")
+	client, err := DialWebsocket(t.Context(), wsURL, "")
 	if err != nil {
 		t.Fatalf("can't dial: %v", err)
 	}
@@ -134,7 +134,7 @@ func TestWebsocketLargeRead(t *testing.T) {
 				expLimit = *limit // 0 means infinite
 			}
 		}
-		client, err := DialOptions(context.Background(), wsURL, opts...)
+		client, err := DialOptions(t.Context(), wsURL, opts...)
 		if err != nil {
 			t.Fatalf("can't dial: %v", err)
 		}
@@ -184,7 +184,7 @@ func TestWebsocketPeerInfo(t *testing.T) {
 	defer s.Stop()
 	defer ts.Close()
 
-	ctx := context.Background()
+	ctx := t.Context()
 	c, err := DialWebsocket(ctx, tsurl, "origin.example.com")
 	if err != nil {
 		t.Fatal(err)
@@ -218,7 +218,7 @@ func TestClientWebsocketPing(t *testing.T) {
 	var (
 		sendPing    = make(chan struct{})
 		server      = wsPingTestServer(t, sendPing)
-		ctx, cancel = context.WithTimeout(context.Background(), 2*time.Second)
+		ctx, cancel = context.WithTimeout(t.Context(), 2*time.Second)
 	)
 	defer cancel()
 	defer server.Shutdown(ctx)
@@ -274,7 +274,7 @@ func TestClientWebsocketLargeMessage(t *testing.T) {
 	respLength := wsDefaultReadLimit - 50
 	srv.RegisterName("test", largeRespService{respLength})
 
-	c, err := DialWebsocket(context.Background(), wsURL, "")
+	c, err := DialWebsocket(t.Context(), wsURL, "")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -403,7 +403,7 @@ func TestWebsocketMethodNameLengthLimit(t *testing.T) {
 	defer srv.Stop()
 	defer httpsrv.Close()
 
-	client, err := DialWebsocket(context.Background(), wsURL, "")
+	client, err := DialWebsocket(t.Context(), wsURL, "")
 	if err != nil {
 		t.Fatalf("can't dial: %v", err)
 	}

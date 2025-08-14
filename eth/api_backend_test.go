@@ -17,7 +17,6 @@
 package eth
 
 import (
-	"context"
 	"crypto/ecdsa"
 	"errors"
 	"math/big"
@@ -134,7 +133,7 @@ func testSendTx(t *testing.T, withLocal bool) {
 	b := initBackend(withLocal)
 
 	txA := pricedSetCodeTx(0, 250000, uint256.NewInt(params.GWei), uint256.NewInt(params.GWei), key, []unsignedAuth{{nonce: 0, key: key}})
-	if err := b.SendTx(context.Background(), txA); err != nil {
+	if err := b.SendTx(t.Context(), txA); err != nil {
 		t.Fatalf("Failed to submit tx: %v", err)
 	}
 	for {
@@ -146,7 +145,7 @@ func testSendTx(t *testing.T, withLocal bool) {
 	}
 
 	txB := makeTx(1, nil, nil, key)
-	err := b.SendTx(context.Background(), txB)
+	err := b.SendTx(t.Context(), txB)
 
 	if withLocal {
 		if err != nil {

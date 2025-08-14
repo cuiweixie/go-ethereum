@@ -64,7 +64,7 @@ func TestTransactionRollbackBehavior(t *testing.T) {
 func testSendSignedTx(t *testing.T, key *ecdsa.PrivateKey, sim *Backend, isBlobTx bool, nonce uint64) *types.Transaction {
 	t.Helper()
 	client := sim.Client()
-	ctx := context.Background()
+	ctx := t.Context()
 
 	var (
 		err      error

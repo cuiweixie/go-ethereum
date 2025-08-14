@@ -61,7 +61,7 @@ func TestWaitDeployed(t *testing.T) {
 		defer backend.Close()
 
 		// Create the transaction
-		head, _ := backend.Client().HeaderByNumber(context.Background(), nil) // Should be child's, good enough
+		head, _ := backend.Client().HeaderByNumber(t.Context(), nil) // Should be child's, good enough
 		gasPrice := new(big.Int).Add(head.BaseFee, big.NewInt(params.GWei))
 
 		tx := types.NewContractCreation(0, big.NewInt(0), test.gas, gasPrice, common.FromHex(test.code))
@@ -72,7 +72,7 @@ func TestWaitDeployed(t *testing.T) {
 			err     error
 			address common.Address
 			mined   = make(chan struct{})
-			ctx     = context.Background()
+			ctx     = t.Context()
 		)
 		go func() {
 			address, err = bind.WaitDeployed(ctx, backend.Client(), tx.Hash())
@@ -107,14 +107,14 @@ func TestWaitDeployedCornerCases(t *testing.T) {
 	)
 	defer backend.Close()
 
-	head, _ := backend.Client().HeaderByNumber(context.Background(), nil) // Should be child's, good enough
+	head, _ := backend.Client().HeaderByNumber(t.Context(), nil) // Should be child's, good enough
 	gasPrice := new(big.Int).Add(head.BaseFee, big.NewInt(1))
 
 	// Create a transaction to an account.
 	code := "6060604052600a8060106000396000f360606040526008565b00"
 	tx := types.NewTransaction(0, common.HexToAddress("0x01"), big.NewInt(0), 3000000, gasPrice, common.FromHex(code))
 	tx, _ = types.SignTx(tx, types.LatestSigner(params.AllDevChainProtocolChanges), testKey)
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 	if err := backend.Client().SendTransaction(ctx, tx); err != nil {
 		t.Errorf("failed to send transaction: %q", err)
