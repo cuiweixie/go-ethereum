@@ -17,6 +17,7 @@
 package rlp
 
 import (
+	"encoding/binary"
 	"io"
 	"reflect"
 )
@@ -226,25 +227,9 @@ func readSize(b []byte, slen byte) (uint64, error) {
 	if int(slen) > len(b) {
 		return 0, io.ErrUnexpectedEOF
 	}
-	var s uint64
-	switch slen {
-	case 1:
-		s = uint64(b[0])
-	case 2:
-		s = uint64(b[0])<<8 | uint64(b[1])
-	case 3:
-		s = uint64(b[0])<<16 | uint64(b[1])<<8 | uint64(b[2])
-	case 4:
-		s = uint64(b[0])<<24 | uint64(b[1])<<16 | uint64(b[2])<<8 | uint64(b[3])
-	case 5:
-		s = uint64(b[0])<<32 | uint64(b[1])<<24 | uint64(b[2])<<16 | uint64(b[3])<<8 | uint64(b[4])
-	case 6:
-		s = uint64(b[0])<<40 | uint64(b[1])<<32 | uint64(b[2])<<24 | uint64(b[3])<<16 | uint64(b[4])<<8 | uint64(b[5])
-	case 7:
-		s = uint64(b[0])<<48 | uint64(b[1])<<40 | uint64(b[2])<<32 | uint64(b[3])<<24 | uint64(b[4])<<16 | uint64(b[5])<<8 | uint64(b[6])
-	case 8:
-		s = uint64(b[0])<<56 | uint64(b[1])<<48 | uint64(b[2])<<40 | uint64(b[3])<<32 | uint64(b[4])<<24 | uint64(b[5])<<16 | uint64(b[6])<<8 | uint64(b[7])
-	}
+	var buf [8]byte
+	copy(buf[8-int(slen):], b[:slen])
+	s := binary.BigEndian.Uint64(buf[:])
 	// Reject sizes < 56 (shouldn't have separate size) and sizes with
 	// leading zero bytes.
 	if s < 56 || b[0] == 0 {
