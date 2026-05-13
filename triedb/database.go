@@ -33,7 +33,7 @@ import (
 type Config struct {
 	Preimages         bool           // Flag whether the preimage of node key is recorded
 	IsUBT             bool           // Flag whether the db is holding a unified binary tree
-	BinTrieGroupDepth int            // Number of levels per serialized group in binary trie (1-8, default 8)
+	BinTrieGroupDepth int            // Number of levels per serialized group in binary trie (1-8, default 5)
 	HashDB            *hashdb.Config // Configs for hash-based scheme
 	PathDB            *pathdb.Config // Configs for experimental path-based scheme
 }
