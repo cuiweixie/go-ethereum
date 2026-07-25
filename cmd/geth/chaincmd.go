@@ -329,7 +329,7 @@ func dumpGenesis(ctx *cli.Context) error {
 	if utils.IsNetworkPreset(ctx) {
 		genesis = utils.MakeGenesis(ctx)
 	} else if ctx.Bool(utils.DeveloperFlag.Name) && !ctx.IsSet(utils.DataDirFlag.Name) {
-		genesis = core.DeveloperGenesisBlock(11_500_000, nil)
+		genesis = core.DeveloperGenesisBlock(ctx.Uint64(utils.DeveloperGasLimitFlag.Name), &utils.DeveloperAddr)
 	}
 
 	if genesis != nil {
